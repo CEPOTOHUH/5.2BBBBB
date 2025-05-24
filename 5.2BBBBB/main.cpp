@@ -1,6 +1,5 @@
-#include "task2_1.h"
-#include "task2_2.h"
 #include <iostream>
+#include"task2_2.h"
 
 int main() {
     setlocale(LC_ALL, "ru");
@@ -9,16 +8,20 @@ int main() {
         std::cout << "\nВыберите задачу:\n";
         std::cout << "1. Задача 2.1 (повторяющиеся числа)\n";
         std::cout << "2. Задача 2.2 (матрица в степени n)\n";
+        std::cout << "3. Задача 2.21 (матрица в степени n)\n";
         std::cout << "0. Выход\n";
         std::cout << "Введите номер задачи: ";
         std::cin >> choice;
 
         switch (choice) {
         case 1:
-            runTask2_1();
+            //runTask2_1();
             break;
         case 2:
             runTask2_2();
+            break;
+        case 3:
+            runTask2_21();
             break;
         case 0:
             std::cout << "Выход из программы.\n";

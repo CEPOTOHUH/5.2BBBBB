@@ -1,3 +1,4 @@
+
 #include "task2_2.h"
 #include <iostream>
 #include <vector>
@@ -117,8 +118,8 @@ std::vector<std::vector<double>> matrixPower(std::vector<std::vector<double>> ma
 
 void runTask2_2() {
     std::cout << "=== Задача 2.2: Возведение матрицы в степень ===\n";
-
-    size_t rows, cols;
+    size_t
+        rows, cols;
     std::cout << "Введите размеры матрицы (строки и столбцы): ";
     std::cin >> rows >> cols;
 
@@ -145,5 +146,133 @@ void runTask2_2() {
     if (!result.empty()) {
         std::cout << "Результат возведения в степень " << power << ":\n";
         printMatrix(result);
+    }
+}
+
+std::vector<double> powerplus(const std::vector<double> array, int power, int size)
+{
+    std::vector<double> res(pow(size, 2));
+
+    if (power == 1)
+        return array;
+    for (int pwr = 0;pwr < power - 1;pwr++) {
+        for (int i = 0; i < pow(size, 2); i++) {
+            for (int j = 0;j < size;j++) {
+                res[i] += array[i - i % size + j] * array[i % size + j * size];
+            }
+        }
+    }
+    return res;
+}
+
+std::vector<double> inverseMatrix(const std::vector<double>& A, int n) {
+    std::vector<double> augmented(n * 2 * n, 0);
+
+    // Формируем расширенную матрицу (A | I)
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            augmented[i * 2 * n + j] = A[i * n + j];
+        }
+        augmented[i * 2 * n + (n + i)] = 1;
+    }
+
+    // Прямой ход метода Гаусса-Жордана
+    for (int i = 0; i < n; i++) {
+        if (augmented[i * 2 * n + i] == 0) {
+            std::cerr << "Матрица является вырожденной!" << std::endl;
+            exit(1);
+        }
+
+        double diagElement = augmented[i * 2 * n + i];
+        for (int j = 0; j < 2 * n; j++) {
+            augmented[i * 2 * n + j] /= diagElement;
+        }
+
+        for (int k = 0; k < n; k++) {
+            if (k != i) {
+                double factor = augmented[k * 2 * n + i];
+                for (int j = 0; j < 2 * n; j++) {
+                    augmented[k * 2 * n + j] -= factor * augmented[i * 2 * n + j];
+                }
+            }
+        }
+    }
+
+    // Извлекаем обратную матрицу
+    std::vector<double> inverse(n * n);
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            inverse[i * n + j] = augmented[i * 2 * n + (j + n)];
+        }
+    }
+    return inverse;
+}
+
+std::vector<double> powarray(const std::vector<double> array, int power, int size) {
+    std::vector<double> res(array.size());
+    if (power == 0) {
+        for (int i = 0;i < array.size();i++) {
+            res[i] = 1.0;
+        }
+        return res;
+    }
+
+    if (power > 0) {
+        for (int i = 0; i < array.size(); i++) {
+            res[i] = 0;
+        }
+        return powerplus(array, power, size);
+    }
+
+    res = inverseMatrix(array, size);
+    return powerplus(res, -1 * power, size);
+
+}
+
+
+
+void printMatrix1(const std::vector<double>& M, int n) {
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            std::cout << M[i * n + j] << "\t";
+        }
+        std::cout << std::endl;
+    }
+}
+
+void runTask2_21() {
+    std::cout << "=== Задача 2.2: Возведение матрицы в степень ===\n";
+    size_t size;
+    std::cout << "Введите размерность матрицы: ";
+    std::cin >> size;
+
+    std::vector<double> array(pow(size, 2));
+
+    std::cout << "Введите элементы матрицы построчно:\n";
+    for (size_t i = 0; i < pow(size, 2); ++i) {
+        std::cin >> array[i];
+    }
+
+    for (int i = 0;i < size;++i) {
+        for (int j = 0;j < size;++j) {
+            std::cout << array[i * size + j] << ' ';
+        }
+        std::cout << std::endl;
+    }
+
+    int power;
+    std::cout << "Введите степень, в которую нужно возвести матрицу: ";
+    std::cin >> power;
+
+    /*if (rows != cols && power != 1) {                     я сразу имею ввиду что матрица размера size * size
+std::cout << "Ошибка: матрица не квадратная, возведение в степень невозможно!\n";
+        return;
+    }*/
+
+    std::vector<double> result = powarray(array, power, size);
+
+    if (!result.empty()) {
+        std::cout << "Результат возведения в степень " << power << ":\n";
+        printMatrix1(result, size);
     }
 }
